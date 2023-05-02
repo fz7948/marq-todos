@@ -1,0 +1,69 @@
+html,
+body {
+  max-width: 100vw;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+input {
+  border: 0;
+  border-radius: 5px;
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid #ddd;
+}
+input[type="checkbox"]::after {
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  content: "";
+  display: none;
+  height: 40%;
+  left: 40%;
+  position: relative;
+  top: 20%;
+  transform: rotate(45deg);
+  width: 15%;
+}
+input[type="checkbox"]:checked {
+  background: #ffb6c1;
+}
+input[type="checkbox"]:checked::after {
+  display: block;
+}
+
+button {
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+  &:hover {
+    filter: brightness(90%);
+  }
+  &:active {
+    filter: brightness(80%);
+  }
+}
+
+// button[type="submit"] {
+// }
+
+// button[type="button"] {
+// }

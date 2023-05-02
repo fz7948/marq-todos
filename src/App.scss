@@ -1,0 +1,148 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mainpage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 1rem 0;
+  > h1 {
+    font-size: 3rem;
+  }
+
+  &_submit {
+    display: flex;
+    width: 100%;
+    height: 2.5rem;
+    gap: 0.3rem;
+    padding-top: 0.5rem;
+    > input {
+      flex: 1;
+      background-color: #fffacd;
+      padding-left: 8px;
+    }
+    > button {
+      padding: 0 1rem;
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+  }
+
+  &_list {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    padding-top: 0.8rem;
+
+    &_header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 2rem;
+      padding: 0.8rem 0.5rem 0 0.2rem;
+
+      &_sort {
+        display: flex;
+        gap: 1rem;
+        > button {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 0.5rem 0.8rem;
+          border-radius: 2rem;
+          font-weight: 600;
+          font-size: 0.9rem;
+          &.on {
+            background-color: #ffb6c1;
+          }
+          &.off {
+            background-color: #fff;
+          }
+        }
+      }
+    }
+
+    &_body {
+      display: flex;
+      flex-direction: column;
+      padding-top: 1rem;
+      gap: 0.5rem;
+
+      &_item {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 2.5rem;
+        background-color: #f4f4f4;
+        border-radius: 5px;
+        padding: 0 0.5rem;
+
+        input[type="checkbox"].todo_checkbox {
+          width: 23px;
+          height: 23px;
+        }
+        > h3 {
+          padding-left: 0.3rem;
+          flex: 1;
+        }
+        .button_wrapper {
+          display: flex;
+          gap: 0.6rem;
+          button {
+            background-color: #fff;
+            padding: 0.4rem 0.6rem;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+}
+
+.button-with-margin {
+  margin: 10px;
+  font-size: 20px;
+  line-height: 30px;
+}
+
+.button-with-margin.clear {
+  background-color: palevioletred;
+  color: wheat;
+}
+
+.fetch-result {
+  border: 5px dashed mediumpurple;
+  border-radius: 30px;
+  padding: 40px;
+  margin: 30px;
+  position: relative;
+  font-size: 20px;
+  line-height: 25px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.fetch-result:after {
+  content: "Fetch Result";
+  display: block;
+  position: absolute;
+  top: -23px;
+  line-height: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  color: mediumpurple;
+  background: wheat;
+  padding: 5px 10px;
+  border-radius: 20px;
+  border: 4px dashed mediumpurple;
+}
