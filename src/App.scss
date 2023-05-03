@@ -29,6 +29,7 @@
       flex: 1;
       background-color: #fffacd;
       padding-left: 8px;
+      border-radius: 5px;
     }
     > button {
       padding: 0 1rem;
@@ -84,16 +85,28 @@
         width: 100%;
         height: 2.5rem;
         background-color: #f4f4f4;
-        border-radius: 5px;
         padding: 0 0.5rem;
 
         input[type="checkbox"].todo_checkbox {
           width: 23px;
           height: 23px;
+          border-radius: 5px;
         }
         > h3 {
           padding-left: 0.3rem;
           flex: 1;
+          &.completed {
+            text-decoration: line-through;
+            text-decoration-thickness: 3px;
+            text-decoration-color: #000;
+            color: gray;
+          }
+        }
+        .input_edit {
+          margin: 0 1rem 0 0.3rem;
+          flex: 1;
+          height: 25px;
+          border-radius: 5px;
         }
         .button_wrapper {
           display: flex;
@@ -101,48 +114,12 @@
           button {
             background-color: #fff;
             padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
             font-weight: 600;
+            border-radius: 5px;
           }
         }
       }
     }
   }
-}
-
-.button-with-margin {
-  margin: 10px;
-  font-size: 20px;
-  line-height: 30px;
-}
-
-.button-with-margin.clear {
-  background-color: palevioletred;
-  color: wheat;
-}
-
-.fetch-result {
-  border: 5px dashed mediumpurple;
-  border-radius: 30px;
-  padding: 40px;
-  margin: 30px;
-  position: relative;
-  font-size: 20px;
-  line-height: 25px;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.fetch-result:after {
-  content: "Fetch Result";
-  display: block;
-  position: absolute;
-  top: -23px;
-  line-height: 25px;
-  font-size: 18px;
-  font-weight: bold;
-  color: mediumpurple;
-  background: wheat;
-  padding: 5px 10px;
-  border-radius: 20px;
-  border: 4px dashed mediumpurple;
 }

@@ -3,13 +3,13 @@ import "./App.scss";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 
-const SORT_TYPE = {
+export const SORT_TYPE = {
   all: "All",
   active: "Active",
   completed: "Completed",
 };
 
-type FormType = {
+export type FormType = {
   id: string;
   content: string;
 };
@@ -21,39 +21,96 @@ const initialState = {
 
 export default function App() {
   const [message, setMessage] = React.useState<FormType>(initialState);
-  const [form, setForm] = React.useState<FormType[]>([]);
-  const [sortType, setSortType] = React.useState(SORT_TYPE.all);
+  const [clientData, setClientData] = React.useState<FormType[]>([]);
+  const [sortType, setSortType] = React.useState<string>(SORT_TYPE.all);
+  const [checkedById, setCheckedById] = React.useState<Set<string>>(new Set());
+  const [editedById, setEditedById] = React.useState<Set<string>>(new Set());
 
-  // const handleFormSubmit = async () => {
-  //   try {
-  //     const res = await axios
-  //       .post("/test", { id: "sd", password: "sds" })
-  //       .then((res) => {
-  //         console.log(res, "res ???");
-  //       });
-  //   } catch (e) {
-  //     console.error(e, "post error !");
-  //   }
-  // };
+  const editInputRef = React.useRef<any>(null);
 
-  console.log(message, "message ?");
+  const addTodoList = async () => {
+    try {
+      await axios.post("/test", message).then((res) => {
+        setClientData(res.data.messages);
+      });
+      setMessage(initialState);
+      setSortType(SORT_TYPE.all);
+    } catch (e) {
+      console.error(e, "test post api error !");
+    }
+  };
+
+  const handleEditClick = (id: string) => {
+    const updatedEditedById = new Set(editedById);
+    if (updatedEditedById.has(id)) {
+      updatedEditedById.delete(id);
+    } else {
+      updatedEditedById.add(id);
+    }
+    setEditedById(updatedEditedById);
+  };
+
+  const updateTodoList = async (id: string) => {
+    const editInputValue = editInputRef?.current?.value;
+    try {
+      await axios.put("/test", { id, value: editInputValue }).then((res) => {
+        setClientData(res.data.messages);
+      });
+      editedById.delete(id);
+    } catch (e) {
+      console.error(e, "test put api error !");
+    }
+  };
+
+  const deleteTodoList = async (id: string) => {
+    try {
+      await axios.delete("/test", { data: { id } }).then((res) => {
+        setClientData(res.data.messages);
+      });
+      editedById.delete(id);
+    } catch (e) {
+      console.error(e, "test delete api error !");
+    }
+  };
+
+  const updateCheckedId = async (id: string) => {
+    try {
+      await axios.post("/checked", { id }).then((res) => {
+        setCheckedById(new Set(res.data.messages));
+      });
+    } catch (e) {
+      console.error(e, "checked api error !");
+    }
+  };
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setMessage({ id: uuidv4(), content: value });
   };
 
+  React.useEffect(() => {
+    try {
+      axios
+        .get("/test", { params: { sortType } })
+        .then((res) => setClientData(res.data.messages));
+    } catch (e) {
+      console.error(e, "test get api error !");
+    }
+  }, [sortType]);
+
   return (
     <main className="App">
       <section className="mainpage">
         <h1>Marq-TODO ✏️</h1>
         <section className="mainpage_submit">
-          <input onChange={handleMessageChange} />
-          <button type="submit">Add Todo</button>
+          <input onChange={handleMessageChange} value={message.content} />
+          <button type="submit" onClick={addTodoList}>
+            Add Todo
+          </button>
         </section>
         <section className="mainpage_list">
           <div className="mainpage_list_header">
-            <h4>5 tasks</h4>
+            <h4>{`${clientData.length} tasks`}</h4>
             <div className="mainpage_list_header_sort">
               {Object.values(SORT_TYPE).map((value) => (
                 <button
@@ -68,136 +125,52 @@ export default function App() {
             </div>
           </div>
           <div className="mainpage_list_body">
-            <div className="mainpage_list_body_item">
-              <input type="checkbox" className="todo_checkbox" />
-              <h3>Todo 1</h3>
-              <div className="button_wrapper">
-                <button type="button">Edit</button>
-                <button type="button">Delete</button>
+            {clientData.map((data) => (
+              <div className="mainpage_list_body_item" key={data.id}>
+                <input
+                  type="checkbox"
+                  className="todo_checkbox"
+                  checked={checkedById.has(data.id)}
+                  onChange={() => updateCheckedId(data.id)}
+                />
+                {editedById.has(data.id) ? (
+                  <input ref={editInputRef} className="input_edit" />
+                ) : (
+                  <h3
+                    className={
+                      checkedById.has(data.id) ? "completed" : undefined
+                    }
+                  >
+                    {data.content}
+                  </h3>
+                )}
+                <div className="button_wrapper">
+                  {editedById.has(data.id) ? (
+                    <button onClick={() => updateTodoList(data.id)}>
+                      Update
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => handleEditClick(data.id)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => deleteTodoList(data.id)}
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="mainpage_list_body_item"></div>
+            ))}
           </div>
         </section>
       </section>
     </main>
   );
 }
-
-// import React, { useState } from "react";
-// import "./App.scss";
-
-// async function callApi<T = any>({
-//   url,
-//   method,
-// }: {
-//   url: string;
-//   method: string;
-// }) {
-//   const res = await fetch(url, { method });
-//   const json = await res?.json();
-
-//   if (!res.ok) {
-//     // eslint-disable-next-line no-throw-literal
-//     throw {
-//       statusText: res.statusText,
-//       json,
-//     };
-//   }
-
-//   return json as T;
-// }
-
-// function App() {
-//   const [fetchResult, setFetchResult] = useState<string[]>([]);
-
-//   return (
-//     <>
-//       <button
-//         className="button-with-margin"
-//         onClick={async () => {
-//           try {
-//             const json = await callApi<{ messages: string }>({
-//               url: "/test",
-//               method: "post",
-//             });
-
-//             setFetchResult([...fetchResult, JSON.stringify(json.messages)]);
-//           } catch (e) {
-//             console.log("e", e);
-//           }
-//         }}
-//       >
-//         post test
-//       </button>
-//       <button
-//         className="button-with-margin"
-//         onClick={async () => {
-//           try {
-//             const json = await callApi<{ messages: string }>({
-//               url: "/test",
-//               method: "get",
-//             });
-
-//             setFetchResult([...fetchResult, JSON.stringify(json.messages)]);
-//           } catch (e) {
-//             console.log("e", e);
-//           }
-//         }}
-//       >
-//         get test
-//       </button>
-//       <button
-//         className="button-with-margin"
-//         onClick={async () => {
-//           try {
-//             const json = await callApi<{ messages: string }>({
-//               url: "/test",
-//               method: "put",
-//             });
-
-//             setFetchResult([...fetchResult, JSON.stringify(json.messages)]);
-//           } catch (e) {
-//             console.log("e", e);
-//           }
-//         }}
-//       >
-//         put test
-//       </button>
-//       <button
-//         className="button-with-margin"
-//         onClick={async () => {
-//           try {
-//             const json = await callApi<{ messages: string }>({
-//               url: "/test",
-//               method: "delete",
-//             });
-
-//             setFetchResult([...fetchResult, JSON.stringify(json.messages)]);
-//           } catch (e) {
-//             console.log("e", e);
-//           }
-//         }}
-//       >
-//         delete test
-//       </button>
-//       <button
-//         className="button-with-margin clear"
-//         onClick={() => setFetchResult([])}
-//       >
-//         Clear!
-//       </button>
-//       <br />
-//       <br />
-//       {fetchResult?.length > 0 && (
-//         <ul className="fetch-result">
-//           {[...fetchResult].reverse().map((v, i) => (
-//             <li key={`${v}-${i}`}>{v}</li>
-//           ))}
-//         </ul>
-//       )}
-//     </>
-//   );
-// }
-
-// export default App;
