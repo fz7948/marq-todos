@@ -5,6 +5,7 @@ export const SORT_TYPE = {
 };
 
 export interface FormType {
+  map(arg0: (item: FormType) => JSX.Element): import("react").ReactNode;
   id: number;
   content: string;
   created_at: string;
