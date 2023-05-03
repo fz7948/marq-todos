@@ -1,8 +1,12 @@
 import { rest } from "msw";
-import { FormType, SORT_TYPE } from "../App";
+// types
+import { FormType, SORT_TYPE } from "../types";
+// utils
+import { toStringByFormatting } from "../utils";
 
 const data = { messages: [] as FormType[] };
 let checkedById = new Set() as any;
+let messagesById = new Set() as any;
 
 export const handlers = [
   rest.get("/test", (req: any, res, ctx) => {
@@ -35,8 +39,32 @@ export const handlers = [
   }),
 
   rest.post("/test", (req: any, res, ctx) => {
+    const { id, content } = req.body;
     const baseMessages = [...data.messages];
-    const newMessages = [req.body, ...baseMessages];
+    const referenceId = [] as Array<number>;
+    const newContent = content
+      .split(" @")
+      .reduce((res: string[], cur: string) => {
+        if (!isNaN(Number(cur))) {
+          if (messagesById.has(+cur)) {
+            referenceId.push(+cur);
+          }
+          return res;
+        }
+        return [...res, cur];
+      }, [])
+      .join(" @");
+
+    const newMessages = [
+      {
+        ...req.body,
+        content: newContent,
+        reference: referenceId,
+        created_at: toStringByFormatting(new Date()),
+      },
+      ...baseMessages,
+    ];
+    messagesById.add(id);
     data.messages = newMessages;
 
     return res(
@@ -52,7 +80,14 @@ export const handlers = [
     const newMessages = data.messages.reduce(
       (res: FormType[], cur: FormType) => {
         if (id === cur.id) {
-          return [...res, { ...cur, content: value }];
+          return [
+            ...res,
+            {
+              ...cur,
+              content: value,
+              updated_at: toStringByFormatting(new Date()),
+            },
+          ];
         }
         return [...res, cur];
       },
@@ -81,6 +116,7 @@ export const handlers = [
       []
     );
     data.messages = newMessages;
+    messagesById.delete(id);
 
     return res(
       ctx.status(200),
@@ -91,13 +127,26 @@ export const handlers = [
   }),
 
   rest.post("/checked", (req: any, res, ctx) => {
-    const { id } = req.body;
+    const { data } = req.body;
+
+    const referenceCheck = data.reference.every((referenceId: number) => {
+      if (checkedById.has(referenceId)) {
+        return true;
+      }
+      return false;
+    });
+
     const updatedCheckedById = new Set(checkedById);
-    if (updatedCheckedById.has(id)) {
-      updatedCheckedById.delete(id);
+    if (referenceCheck) {
+      if (updatedCheckedById.has(data.id)) {
+        updatedCheckedById.delete(data.id);
+      } else {
+        updatedCheckedById.add(data.id);
+      }
     } else {
-      updatedCheckedById.add(id);
+      updatedCheckedById.delete(data.id);
     }
+
     checkedById = updatedCheckedById;
 
     return res(
