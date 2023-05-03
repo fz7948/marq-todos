@@ -41,8 +41,6 @@ export default function App() {
     }
   };
 
-  console.log(clientData, "clientData ?");
-
   const handleEditByIdUpdate = (id: number) => {
     const updatedEditedById = new Set(editedById);
     if (updatedEditedById.has(id)) {

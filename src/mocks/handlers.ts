@@ -111,7 +111,8 @@ export const handlers = [
         if (id === cur.id) {
           return res;
         }
-        return [...res, cur];
+        const filterReference = cur.reference.filter((item) => item !== id);
+        return [...res, { ...cur, reference: filterReference }];
       },
       []
     );
