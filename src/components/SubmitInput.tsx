@@ -2,10 +2,16 @@ import React from "react";
 import axios from "axios";
 // zustand
 import { useLocalStorage } from "../store";
-// components
-import { initialState } from "../App";
 // types
 import { SORT_TYPE, FormType } from "../types";
+
+export const initialState = {
+  id: 0,
+  content: "",
+  created_at: "",
+  updated_at: "",
+  reference: [],
+};
 
 type Props = {
   onSetClientData: (message: FormType[]) => void;

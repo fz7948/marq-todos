@@ -8,6 +8,30 @@
   margin-right: auto;
 }
 
+// Loading
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  background: #f4f4f4;
+}
+
+// NotFoundPage
+.notfoundpage {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+// TodoPage
 .mainpage {
   display: flex;
   flex-direction: column;
@@ -101,12 +125,20 @@
             display: flex;
             justify-content: space-between;
             padding: 0 0.7rem 0 0.3rem;
+            align-items: center;
             flex: 1;
             > .completed {
               text-decoration: line-through;
               text-decoration-thickness: 3px;
               text-decoration-color: #000;
               color: gray;
+            }
+            > h3 {
+              max-width: 20rem;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              padding-right: 1rem;
             }
 
             &_info {
